@@ -80,10 +80,19 @@ class Deck extends Container {
     this.updateCounter();
   }
 
-  getCard(index: number = this.numCards - 1): Card {
+  getCard(index: number = this.numCards - 1): Card | null {
+    if (this.numCards === 0) return null;
+
     const card = this._cardsContainer.removeChildAt<Card>(index);
     this.updateCounter();
     return card;
+  }
+
+  getNextCardCoordinates(offset: number = 0): Point {
+    return new Point(
+      (this.numCards + offset) * this.ADD_CARD_OFFSET.x,
+      (this.numCards + offset) * this.ADD_CARD_OFFSET.y
+    );
   }
 }
 

@@ -3,6 +3,8 @@ import Deck from '../components/deck';
 import Card from '../components/card';
 import CardFlipAnimation from '../systems/cardFlipAnimation';
 import waitForTickerTime from '../utils/waitForTickerTime';
+import ButtonFactory from '../systems/buttonFactory';
+import waitForCondition from '../utils/waitForCondition';
 
 class SceneTask1 extends Container {
   private NUM_CARDS = 144;
@@ -11,6 +13,8 @@ class SceneTask1 extends Container {
   private _cardFlipAnimation: CardFlipAnimation;
   private _backCardsLayer: Container;
   private _frontCardsLayer: Container;
+  private _UILayer: Container;
+  private _paused: boolean = true;
 
   constructor() {
     super();
@@ -18,6 +22,7 @@ class SceneTask1 extends Container {
     this._cardFlipAnimation = new CardFlipAnimation();
     this._backCardsLayer = new Container();
     this._frontCardsLayer = new Container();
+    this._UILayer = new Container();
   }
 
   public async init(app: Application) {
@@ -53,10 +58,48 @@ class SceneTask1 extends Container {
     this.addChild(this._backCardsLayer);
     this.addChild(this._frontCardsLayer);
 
+    this._setButtons(app);
+
     this._moveCard(app);
   }
 
+  private _setButtons(app: Application) {
+    const buttonStart = ButtonFactory.createDefaultButton('Start');
+    buttonStart.x = app.screen.width / 2;
+    buttonStart.y = app.screen.height - 100;
+    this._UILayer.addChild(buttonStart);
+
+    const buttonStop = ButtonFactory.createDefaultButton('Stop');
+    buttonStop.x = app.screen.width / 2;
+    buttonStop.y = app.screen.height - 100;
+    buttonStop.disabled = true;
+    buttonStop.visible = false;
+    this._UILayer.addChild(buttonStop);
+
+    buttonStart.onpointerup = () => {
+      this._paused = false;
+      this._cardFlipAnimation.resume();
+      buttonStart.disabled = true;
+      buttonStart.visible = false;
+      buttonStop.disabled = false;
+      buttonStop.visible = true;
+    };
+
+    buttonStop.onpointerup = () => {
+      this._paused = true;
+      this._cardFlipAnimation.pause();
+      buttonStop.disabled = true;
+      buttonStop.visible = false;
+      buttonStart.disabled = false;
+      buttonStart.visible = true;
+    };
+
+    this.addChild(this._UILayer);
+  }
+
   private async _moveCard(app: Application) {
+    await waitForCondition(() => this._paused);
+
     const card = this._decks[0].getCard();
 
     if (!card) return;

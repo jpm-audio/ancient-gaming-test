@@ -1,29 +1,17 @@
-import { Application, Text } from 'pixi.js';
+import { Application, Assets, Sprite } from 'pixi.js';
 import './style.css';
+import SceneTask1 from './scenes/task_1';
 
 (async () => {
   const app = new Application();
 
   await app.init({ background: '#1099bb', resizeTo: window });
 
-  const greet = new Text({
-    text: 'Hello World!',
-    style: {
-      fontFamily: 'Arial',
-      fontSize: 32,
-      fill: '#ffffff',
-    },
-    anchor: {
-      x: 0.5,
-      y: 0.5,
-    },
-    position: {
-      x: app.screen.width / 2,
-      y: app.screen.height / 2,
-    },
-  });
+  const scene = new SceneTask1();
 
-  app.stage.addChild(greet);
+  await scene.init(app);
+
+  app.stage.addChild(scene);
 
   document.body.appendChild(app.canvas);
 })();

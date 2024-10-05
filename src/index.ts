@@ -4,6 +4,7 @@ import SceneTask1 from './scenes/task_1';
 import { gsap } from 'gsap';
 import { PixiPlugin } from 'gsap/PixiPlugin';
 import * as PIXI from 'pixi.js';
+import SceneTask2 from './scenes/task_2';
 
 (async () => {
   // Init PixiJS
@@ -16,7 +17,13 @@ import * as PIXI from 'pixi.js';
   PixiPlugin.registerPIXI(PIXI);
 
   // Init the scene
-  const scene = new SceneTask1();
-  await scene.init(app);
-  app.stage.addChild(scene);
+  const scene1 = new SceneTask1();
+  await scene1.init(app);
+  app.stage.addChild(scene1);
+  scene1.visible = false;
+  scene1.renderable = false;
+
+  const scene2 = new SceneTask2();
+  await scene2.init(app);
+  app.stage.addChild(scene2);
 })();

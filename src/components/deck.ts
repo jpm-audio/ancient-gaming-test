@@ -94,6 +94,11 @@ class Deck extends Container {
       (this.numCards + offset) * this.ADD_CARD_OFFSET.y
     );
   }
+
+  reset() {
+    this._cardsContainer.removeChildren();
+    this.updateCounter();
+  }
 }
 
 export default Deck;

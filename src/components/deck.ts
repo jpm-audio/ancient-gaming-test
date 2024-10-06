@@ -62,6 +62,14 @@ class Deck extends Container {
     }
   }
 
+  getTheoricalWidth() {
+    return this.width + this.numCards * Math.abs(this.ADD_CARD_OFFSET.x);
+  }
+
+  getTheoricalHeight() {
+    return this.height + this.numCards * Math.abs(this.ADD_CARD_OFFSET.y);
+  }
+
   updateCounter() {
     this._counter.visible = this.numCards > 0;
 

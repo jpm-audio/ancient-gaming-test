@@ -7,6 +7,7 @@ import FpsDisplay from '../components/fpsDisplay';
 import TaskScene from './taskScene';
 import WelcomeScene from './welcomeScene';
 import HomeButton from '../components/homeButton';
+import debounce from '../utils/debounce';
 
 export default class Main extends Container {
   private _currentApp: Application;
@@ -40,6 +41,9 @@ export default class Main extends Container {
     // Create App Elements
     this._createScenes();
     this._createUI();
+
+    // Add resize listener
+    window.addEventListener('resize', debounce(this.onResize.bind(this), 300));
 
     this.positionElements();
 
@@ -90,6 +94,10 @@ export default class Main extends Container {
       onpointerup: () => this.openScene(0),
     });
     this._uiLayer.addChild(this._homeButton);
+  }
+
+  public onResize() {
+    this.positionElements();
   }
 
   public startCurrentScene() {
@@ -151,11 +159,11 @@ export default class Main extends Container {
         this._uiController.show(),
         this._homeButton.show(),
       ]);
-    }
 
-    ///Enable/Reset UI
-    this._uiController.reset();
-    this._homeButton.reset();
+      ///Enable/Reset UI
+      this._uiController.reset();
+      this._homeButton.reset();
+    }
   }
 
   public nextScene() {
@@ -185,10 +193,15 @@ export default class Main extends Container {
     this._fpsDisplay.y = this._fpsDisplay.height / 2 + padding;
 
     this._uiController.x = this._currentApp.screen.width / 2;
-    this._uiController.y = this._currentApp.screen.height - 100;
+    this._uiController.y = this._currentApp.screen.height - 50;
 
     this._homeButton.x =
       this._currentApp.screen.width - this._homeButton.width / 2 - padding;
     this._homeButton.y = this._homeButton.height / 2 + padding;
+
+    this._scenesLayer.children.forEach((scene) => {
+      const taskScene = scene as TaskScene;
+      taskScene.positionElements();
+    });
   }
 }

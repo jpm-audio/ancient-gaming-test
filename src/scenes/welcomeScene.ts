@@ -82,9 +82,30 @@ export default class WelcomeScene extends TaskScene {
   public positionElements() {
     super.positionElements();
 
+    if (!this._isInitialized) return;
+
+    // Check available width and height and adjust scale
+    this._taskSelectors.scale = 1;
+
+    const availableWidth =
+      this._main.currentApp.screen.width - 2 * TaskScene.PADDING;
+    const availableHeight =
+      this._main.currentApp.screen.height -
+      this._subtitle.y -
+      this._subtitle.height / 2 -
+      2 * TaskScene.PADDING;
+    const scaleByWidth = availableWidth / this._taskSelectors.width;
+    const scaleByHeight = availableHeight / this._taskSelectors.height;
+
+    this._taskSelectors.scale = Math.min(scaleByWidth, scaleByHeight);
+
+    const posYFromSubtitle =
+      this._subtitle.y + this._subtitle.height / 2 + TaskScene.PADDING;
+    const posYCenter =
+      (this._main.currentApp.screen.height - this._taskSelectors.height) / 2;
+
     this._taskSelectors.x =
       (this._main.currentApp.screen.width - this._taskSelectors.width) / 2;
-    this._taskSelectors.y =
-      (this._main.currentApp.screen.height - this._taskSelectors.height) / 2;
+    this._taskSelectors.y = Math.max(posYFromSubtitle, posYCenter);
   }
 }

@@ -10,6 +10,7 @@ export interface TaskSceneInfo {
 
 export default class TaskScene extends Container {
   static DEFAULT_TRANSITION_TIME = 0.5;
+  static PADDING = 50;
   protected _main: Main;
   protected _isPaused: boolean = true;
   protected _isRunning: boolean = false;
@@ -17,6 +18,7 @@ export default class TaskScene extends Container {
   protected _transitionTime: number;
   protected _title: Text;
   protected _subtitle: Text;
+  protected _background: Sprite;
   protected _info: TaskSceneInfo;
 
   constructor(
@@ -57,6 +59,8 @@ export default class TaskScene extends Container {
     background.x = this._main.currentApp.screen.width / 2;
     background.y = this._main.currentApp.screen.height / 2;
     this.addChild(background);
+
+    this._background = background;
   }
 
   protected _createTitle() {
@@ -122,27 +126,40 @@ export default class TaskScene extends Container {
   }
 
   public async open() {
-    console.log('TaskScene::open1');
     await this.init();
-    console.log('TaskScene::open2');
     await gsap.to(this, { duration: this._transitionTime, alpha: 1 });
-    console.log('TaskScene::open3');
   }
 
   public async close() {
-    console.log('TaskScene::close');
     await gsap.to(this, { duration: this._transitionTime, alpha: 0 });
   }
 
   public positionElements() {
     if (!this._isInitialized) return;
+
+    const isShort = this._main.currentApp.screen.height < 500;
+
     if (this._title) {
+      const minY = isShort ? 80 : 100;
+      this._title.scale = isShort ? 0.75 : 1;
       this._title.x = this._main.currentApp.screen.width / 2;
-      this._title.y = this._main.currentApp.screen.height * 0.15;
+      this._title.y = Math.max(
+        minY,
+        this._main.currentApp.screen.height * 0.15
+      );
     }
     if (this._subtitle) {
+      const marginY = isShort ? 35 : 65;
+      this._subtitle.scale = isShort ? 0.75 : 1;
       this._subtitle.x = this._main.currentApp.screen.width / 2;
-      this._subtitle.y = this._title.y + 75;
+      this._subtitle.y = this._title.y + marginY;
+    }
+
+    if (this._background) {
+      this._background.x = this._main.currentApp.screen.width / 2;
+      this._background.y = this._main.currentApp.screen.height / 2;
+      this._background.width = this._main.currentApp.screen.width;
+      this._background.height = this._main.currentApp.screen.height;
     }
   }
 }

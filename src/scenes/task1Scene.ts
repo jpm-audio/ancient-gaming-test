@@ -13,14 +13,17 @@ export default class Task1Scene extends TaskScene {
   private _decks: Deck[] = [];
   private _cards: Card[] = [];
   private _cardFlipAnimation: CardFlipAnimation;
+  private _decksLayer: Container;
   private _backCardsLayer: Container;
   private _frontCardsLayer: Container;
+  private _decksSize: { width: number; height: number };
 
   constructor(main: Main, info: TaskSceneInfo) {
     super(main, info);
     this._cardFlipAnimation = new CardFlipAnimation();
     this._backCardsLayer = new Container();
     this._frontCardsLayer = new Container();
+    this._decksLayer = new Container();
   }
 
   public async init() {
@@ -58,10 +61,21 @@ export default class Task1Scene extends TaskScene {
 
     await this._createCards();
 
-    this.addChild(this._decks[0]);
-    this.addChild(this._decks[1]);
-    this.addChild(this._backCardsLayer);
-    this.addChild(this._frontCardsLayer);
+    this._decksLayer.addChild(this._decks[0]);
+    this._decksLayer.addChild(this._decks[1]);
+    this._decksLayer.addChild(this._backCardsLayer);
+    this._decksLayer.addChild(this._frontCardsLayer);
+    this.addChild(this._decksLayer);
+
+    this._decksSize = {
+      width: 2 * this._cards[0].width + this.DECKS_GAP + 2 * this.NUM_CARDS,
+      height: this._cards[0].height + 2 * this.NUM_CARDS,
+    };
+
+    this._decks[0].x = this._cards[0].width / 2 + this.NUM_CARDS;
+    this._decks[1].x = this._decks[0].x + this._cards[0].width + this.DECKS_GAP;
+    this._decks[0].y = this._decks[1].y =
+      this._cards[0].height / 2 + 2 * this.NUM_CARDS;
   }
 
   private async _animateACard() {
@@ -157,17 +171,29 @@ export default class Task1Scene extends TaskScene {
   public positionElements() {
     super.positionElements();
     if (!this._isInitialized) return;
-    this._decks[0].x =
-      (this._main.currentApp.screen.width -
-        this._cards[0].width -
-        this.DECKS_GAP) /
+
+    this._decksLayer.scale.set(1);
+
+    const availableWidth =
+      this._main.currentApp.screen.width - 2 * TaskScene.PADDING;
+    const availableHeight =
+      this._main.currentApp.screen.height -
+      this._subtitle.y -
+      this._subtitle.height / 2 -
+      4 * TaskScene.PADDING;
+    const scaleByWidth = availableWidth / this._decksSize.width;
+    const scaleByHeight = availableHeight / this._decksSize.height;
+    const scale = Math.min(scaleByWidth, scaleByHeight);
+    this._decksLayer.scale.set(scale);
+
+    const posYFromSubtitle =
+      this._subtitle.y + this._subtitle.height / 2 + TaskScene.PADDING;
+    const posYCenter =
+      (this._main.currentApp.screen.height - this._decksSize.height * scale) /
       2;
-    this._decks[1].x =
-      (this._main.currentApp.screen.width +
-        this._cards[0].width +
-        this.DECKS_GAP) /
-      2;
-    this._decks[0].y = this._decks[1].y =
-      this._main.currentApp.screen.height / 2;
+
+    this._decksLayer.x =
+      (this._main.currentApp.screen.width - this._decksSize.width * scale) / 2;
+    this._decksLayer.y = Math.max(posYFromSubtitle, posYCenter);
   }
 }

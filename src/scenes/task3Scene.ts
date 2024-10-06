@@ -6,7 +6,7 @@ import Main from './main';
 
 export default class Task3Scene extends TaskScene {
   private _fire: ParticleEmitter;
-  private _background: TilingSprite;
+  private _backgroundTile: TilingSprite;
 
   constructor(main: Main, info: TaskSceneInfo) {
     super(main, info);
@@ -38,8 +38,8 @@ export default class Task3Scene extends TaskScene {
     this._fire.y = this._main.currentApp.screen.height / 2;
     this.addChild(this._fire);
 
-    this._background.interactive = true;
-    this._background.on('pointerdown', (e) => {
+    this._backgroundTile.interactive = true;
+    this._backgroundTile.on('pointerdown', (e) => {
       this._fire.x = e.client.x;
       this._fire.y = e.client.y;
     });
@@ -50,15 +50,15 @@ export default class Task3Scene extends TaskScene {
 
   private _createBackground() {
     const forestTexture = Texture.from('forestTile');
-    this._background = new TilingSprite({
+    this._backgroundTile = new TilingSprite({
       texture: forestTexture,
       width: this._main.currentApp.screen.width,
       height: forestTexture.height,
     });
-    this._background.anchor.set(0.5);
-    this._background.x = this._main.currentApp.screen.width / 2;
-    this._background.y = this._main.currentApp.screen.height / 2;
-    this.addChild(this._background);
+    this._backgroundTile.anchor.set(0.5);
+    this._backgroundTile.x = this._main.currentApp.screen.width / 2;
+    this._backgroundTile.y = this._main.currentApp.screen.height / 2;
+    this.addChild(this._backgroundTile);
   }
 
   public async _animate() {
@@ -97,5 +97,14 @@ export default class Task3Scene extends TaskScene {
     if (!this._isInitialized) return;
     this._fire.x = this._main.currentApp.screen.width / 2;
     this._fire.y = this._main.currentApp.screen.height / 2;
+    this._fire.scale.set(2);
+
+    const scaleByHeight =
+      this._main.currentApp.screen.height / this._backgroundTile.height;
+
+    this._backgroundTile.scale.set(scaleByHeight);
+    this._backgroundTile.width = this._main.currentApp.screen.width;
+    this._backgroundTile.x = this._main.currentApp.screen.width / 2;
+    this._backgroundTile.y = this._main.currentApp.screen.height / 2;
   }
 }

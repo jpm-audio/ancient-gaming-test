@@ -1,14 +1,10 @@
 import { Assets, Sprite, Texture, TilingSprite } from 'pixi.js';
-import UIController from '../components/uiController';
 import { ParticleEmitter } from '../systems/particleEmitter';
 import { task3Data } from '../data/task_3_data';
 import TaskScene, { TaskSceneInfo } from './taskScene';
 import Main from './main';
 
 export default class Task3Scene extends TaskScene {
-  private _UI: UIController;
-  private _paused: boolean = true;
-  private _running: boolean = false;
   private _fire: ParticleEmitter;
   private _background: TilingSprite;
 
@@ -16,7 +12,8 @@ export default class Task3Scene extends TaskScene {
     super(main, info);
   }
   public async init() {
-    await super.init();
+    if (this._isInitialized) return;
+    this._isInitialized = true;
 
     Assets.add({ alias: 'fireParticles', src: 'assets/sprites/task_3_0.json' });
     Assets.add({ alias: 'forestTile', src: 'assets/images/forest_tile.png' });
@@ -69,16 +66,36 @@ export default class Task3Scene extends TaskScene {
   }
 
   public start() {
-    this._paused = false;
-    this._running = true;
+    if (this._isRunning) return;
+    this._isPaused = false;
+    this._isRunning = true;
     this._animate();
   }
 
+  public stop() {
+    this.reset();
+  }
+
+  public pause(): void {
+    super.pause();
+    this._fire.pause();
+  }
+
+  public resume(): void {
+    super.resume();
+    this._fire.resume();
+  }
+
   public async reset() {
-    this._paused = false;
-    this._running = false;
+    this._isPaused = false;
+    this._isRunning = false;
     this._fire.stop();
   }
 
-  public async close() {}
+  public positionElements() {
+    super.positionElements();
+    if (!this._isInitialized) return;
+    this._fire.x = this._main.currentApp.screen.width / 2;
+    this._fire.y = this._main.currentApp.screen.height / 2;
+  }
 }

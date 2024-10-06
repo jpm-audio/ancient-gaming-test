@@ -4,23 +4,21 @@ import TextLineBlender from '../systems/textLineBlender';
 import waitForTickerTime from '../utils/waitForTickerTime';
 import gsap from 'gsap';
 import waitForCondition from '../utils/waitForCondition';
-import UIController from '../components/uiController';
 import TaskScene, { TaskSceneInfo } from './taskScene';
 import Main from './main';
 
 export default class Task2Scene extends TaskScene {
-  private _paused: boolean = true;
-  private _running: boolean = false;
   private _textLayer: Container;
-  private _UI: UIController;
-  textLineBlender: TextLineBlender;
+  private _currentLine: Container;
+  public textLineBlender: TextLineBlender;
 
   constructor(main: Main, info: TaskSceneInfo) {
     super(main, info);
   }
 
   public async init() {
-    await super.init();
+    if (this._isInitialized) return;
+    this._isInitialized = true;
 
     Assets.add({ alias: 'animals', src: 'assets/sprites/task_2_0.json' });
 
@@ -37,7 +35,7 @@ export default class Task2Scene extends TaskScene {
   }
 
   private async _animate() {
-    await waitForCondition(() => this._running && this._paused);
+    await waitForCondition(() => this._isRunning && this._isPaused);
 
     if (this._textLayer.children.length > 0) {
       await gsap.to(this._textLayer.children[0], {
@@ -50,18 +48,16 @@ export default class Task2Scene extends TaskScene {
       });
     }
 
-    if (!this._running) return;
+    if (!this._isRunning) return;
 
     const randomLine = this.textLineBlender.getRandomLine();
-    const lineContainer = this.textLineBlender.buildLine(randomLine);
-    lineContainer.x =
-      (this._main.currentApp.screen.width - lineContainer.width) / 2;
-    lineContainer.y =
-      (this._main.currentApp.screen.height - lineContainer.height) / 2;
-    lineContainer.alpha = 0;
-    this._textLayer.addChild(lineContainer);
+    this._currentLine = this.textLineBlender.buildLine(randomLine);
+    this._currentLine.alpha = 0;
+    this._textLayer.addChild(this._currentLine);
 
-    await gsap.to(lineContainer, {
+    this.positionElements();
+
+    await gsap.to(this._currentLine, {
       duration: 0.5,
       ease: 'power1.in',
       pixi: { alpha: 1 },
@@ -73,15 +69,35 @@ export default class Task2Scene extends TaskScene {
   }
 
   public start() {
-    this._paused = false;
-    this._running = true;
+    if (this._isRunning) return;
+    this._isPaused = false;
+    this._isRunning = true;
     this._animate();
   }
 
-  public async reset() {
-    this._paused = false;
-    this._running = false;
+  public stop() {
+    this.reset();
   }
 
-  public async close() {}
+  public pause(): void {
+    super.pause();
+  }
+
+  public resume(): void {
+    super.resume();
+  }
+
+  public async reset() {
+    this._isPaused = false;
+    this._isRunning = false;
+  }
+
+  public positionElements() {
+    super.positionElements();
+    if (!this._isInitialized || !this._currentLine) return;
+    this._currentLine.x =
+      (this._main.currentApp.screen.width - this._currentLine.width) / 2;
+    this._currentLine.y =
+      (this._main.currentApp.screen.height - this._currentLine.height) / 2;
+  }
 }

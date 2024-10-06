@@ -15,8 +15,6 @@ export default class Task1Scene extends TaskScene {
   private _cardFlipAnimation: CardFlipAnimation;
   private _backCardsLayer: Container;
   private _frontCardsLayer: Container;
-  private _paused: boolean = true;
-  private _running: boolean = false;
 
   constructor(main: Main, info: TaskSceneInfo) {
     super(main, info);
@@ -26,7 +24,9 @@ export default class Task1Scene extends TaskScene {
   }
 
   public async init() {
-    await super.init();
+    if (this._isInitialized) return;
+    this._isInitialized = true;
+
     this._createBackgroundGradient(0x00512c, 0x001e10);
     await this._createDecks();
     this._createTitle();
@@ -58,19 +58,6 @@ export default class Task1Scene extends TaskScene {
 
     await this._createCards();
 
-    this._decks[0].x =
-      (this._main.currentApp.screen.width -
-        this._cards[0].width -
-        this.DECKS_GAP) /
-      2;
-    this._decks[1].x =
-      (this._main.currentApp.screen.width +
-        this._cards[0].width +
-        this.DECKS_GAP) /
-      2;
-    this._decks[0].y = this._decks[1].y =
-      this._main.currentApp.screen.height / 2;
-
     this.addChild(this._decks[0]);
     this.addChild(this._decks[1]);
     this.addChild(this._backCardsLayer);
@@ -78,9 +65,9 @@ export default class Task1Scene extends TaskScene {
   }
 
   private async _animateACard() {
-    await waitForCondition(() => this._running && this._paused);
+    await waitForCondition(() => this._isRunning && this._isPaused);
 
-    if (!this._running) return;
+    if (!this._isRunning) return;
 
     const card = this._decks[0].getCard();
 
@@ -140,15 +127,47 @@ export default class Task1Scene extends TaskScene {
   }
 
   public start() {
-    this._paused = false;
-    this._running = true;
+    if (this._isRunning) return;
+    this._isRunning = true;
+    this.resume();
     this._animateACard();
   }
 
+  public stop() {
+    this.reset();
+  }
+
+  public pause(): void {
+    super.pause();
+    this._cardFlipAnimation.pause();
+  }
+
+  public resume(): void {
+    super.resume();
+    this._cardFlipAnimation.resume();
+  }
+
   public reset() {
-    this._paused = true;
-    this._running = false;
+    this._isPaused = false;
+    this._isRunning = false;
     this._cardFlipAnimation.stop();
     this._resetCards();
+  }
+
+  public positionElements() {
+    super.positionElements();
+    if (!this._isInitialized) return;
+    this._decks[0].x =
+      (this._main.currentApp.screen.width -
+        this._cards[0].width -
+        this.DECKS_GAP) /
+      2;
+    this._decks[1].x =
+      (this._main.currentApp.screen.width +
+        this._cards[0].width +
+        this.DECKS_GAP) /
+      2;
+    this._decks[0].y = this._decks[1].y =
+      this._main.currentApp.screen.height / 2;
   }
 }

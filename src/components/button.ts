@@ -20,14 +20,12 @@ export class Button extends Container {
   }
 
   public set disabled(value: boolean) {
-    if (value === this.interactive) {
-      this.interactive = !value;
-      this.removeChildren();
-      if (value) {
-        this.addChild(this._content.disabled);
-      } else {
-        this.addChild(this._content.base);
-      }
+    this.interactive = !value;
+    this.removeChildren();
+    if (value) {
+      this.addChild(this._content.disabled);
+    } else {
+      this.addChild(this._content.base);
     }
   }
 

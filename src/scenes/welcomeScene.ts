@@ -11,7 +11,8 @@ export default class WelcomeScene extends TaskScene {
   }
 
   public async init() {
-    await super.init();
+    if (this._isInitialized) return;
+    this._isInitialized = true;
 
     Assets.add({ alias: 'main', src: 'assets/sprites/main_0.json' });
     await Assets.load('main');
@@ -53,15 +54,15 @@ export default class WelcomeScene extends TaskScene {
     });
 
     this._taskSelectors.getSelector(0).onpointerup = () => {
-      this._main.startScene(1);
+      this._main.openScene(1);
     };
 
     this._taskSelectors.getSelector(1).onpointerup = () => {
-      this._main.startScene(2);
+      this._main.openScene(2);
     };
 
     this._taskSelectors.getSelector(2).onpointerup = () => {
-      this._main.startScene(3);
+      this._main.openScene(3);
     };
 
     this.addChild(this._taskSelectors);

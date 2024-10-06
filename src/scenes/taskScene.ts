@@ -96,13 +96,22 @@ export default class TaskScene extends Container {
 
   public start() {
     console.log('TaskScene::start');
-    if (this._isRunning) return;
     this._isRunning = true;
   }
 
   public stop() {
     console.log('TaskScene::stop');
     this._isRunning = false;
+    this._isPaused = false;
+  }
+
+  public pause() {
+    console.log('TaskScene::pause');
+    this._isPaused = true;
+  }
+
+  public resume() {
+    console.log('TaskScene::resume');
     this._isPaused = false;
   }
 
@@ -113,9 +122,11 @@ export default class TaskScene extends Container {
   }
 
   public async open() {
-    console.log('TaskScene::open');
+    console.log('TaskScene::open1');
     await this.init();
+    console.log('TaskScene::open2');
     await gsap.to(this, { duration: this._transitionTime, alpha: 1 });
+    console.log('TaskScene::open3');
   }
 
   public async close() {

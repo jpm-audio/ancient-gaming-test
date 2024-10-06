@@ -6,11 +6,13 @@ import Task3Scene from './task3Scene';
 import FpsDisplay from '../components/fpsDisplay';
 import TaskScene from './taskScene';
 import WelcomeScene from './welcomeScene';
+import HomeButton from '../components/homeButton';
 
 export default class Main extends Container {
   private _currentApp: Application;
   private _fpsDisplay: FpsDisplay;
   private _uiController: UIController;
+  private _homeButton: HomeButton;
   private _scenesLayer: Container;
   private _uiLayer: Container;
   private _isInitialized: boolean = false;
@@ -41,7 +43,7 @@ export default class Main extends Container {
 
     this.positionElements();
 
-    this.startScene(0);
+    this.openScene(0);
   }
 
   private _createScenes() {
@@ -75,17 +77,57 @@ export default class Main extends Container {
 
     // Create Scenes UI Controller
     this._uiController = new UIController({
-      onStart: () => {},
-      onStop: () => {},
-      onPause: () => {},
-      onResume: () => {},
+      onStart: () => this.startCurrentScene(),
+      onStop: () => this.stopCurrentScene(),
+      onPause: () => this.pauseCurrentScene(),
+      onResume: () => this.resumeCurrentScene(),
+      onPrevScene: () => this.prevScene(),
+      onNextScene: () => this.nextScene(),
     });
     this._uiLayer.addChild(this._uiController);
+
+    this._homeButton = new HomeButton({
+      onpointerup: () => this.openScene(0),
+    });
+    this._uiLayer.addChild(this._homeButton);
   }
 
-  public async startScene(sceneIndex: number) {
+  public startCurrentScene() {
+    const currentScene: TaskScene = this._scenesLayer.getChildAt(
+      this._currentSceneIndex
+    );
+    currentScene.start();
+  }
+
+  public stopCurrentScene() {
+    const currentScene: TaskScene = this._scenesLayer.getChildAt(
+      this._currentSceneIndex
+    );
+    currentScene.stop();
+  }
+
+  public pauseCurrentScene() {
+    const currentScene: TaskScene = this._scenesLayer.getChildAt(
+      this._currentSceneIndex
+    );
+    currentScene.pause();
+  }
+
+  public resumeCurrentScene() {
+    const currentScene: TaskScene = this._scenesLayer.getChildAt(
+      this._currentSceneIndex
+    );
+    currentScene.resume();
+  }
+
+  public async openScene(sceneIndex: number) {
     if (this._currentSceneIndex === sceneIndex) return;
 
+    // Disable UI
+    this._uiController.disable();
+    this._homeButton.disable();
+
+    // Close current scene
     if (this._currentSceneIndex !== -1) {
       const closeScene: TaskScene = this._scenesLayer.getChildAt(
         this._currentSceneIndex
@@ -94,17 +136,59 @@ export default class Main extends Container {
     }
     this._currentSceneIndex = sceneIndex;
 
+    // Open new scene
     const openScene: TaskScene = this._scenesLayer.getChildAt(sceneIndex);
-    await openScene.open();
+
+    if (sceneIndex === 0) {
+      await Promise.all([
+        openScene.open(),
+        this._uiController.hide(),
+        this._homeButton.hide(),
+      ]);
+    } else {
+      await Promise.all([
+        openScene.open(),
+        this._uiController.show(),
+        this._homeButton.show(),
+      ]);
+    }
+
+    ///Enable/Reset UI
+    this._uiController.reset();
+    this._homeButton.reset();
+  }
+
+  public nextScene() {
+    const nextSceneIndex =
+      this._currentSceneIndex === this._scenesLayer.children.length - 1
+        ? 1
+        : this._currentSceneIndex + 1;
+
+    this.openScene(nextSceneIndex);
+  }
+
+  public prevScene() {
+    const prevSceneIndex =
+      this._currentSceneIndex === 1
+        ? this._scenesLayer.children.length - 1
+        : this._currentSceneIndex - 1;
+
+    this.openScene(prevSceneIndex);
   }
 
   public positionElements() {
     if (!this._isInitialized) return;
 
+    const padding = 10;
+
     this._fpsDisplay.x = this._currentApp.screen.width / 2;
-    this._fpsDisplay.y = 30;
+    this._fpsDisplay.y = this._fpsDisplay.height / 2 + padding;
 
     this._uiController.x = this._currentApp.screen.width / 2;
     this._uiController.y = this._currentApp.screen.height - 100;
+
+    this._homeButton.x =
+      this._currentApp.screen.width - this._homeButton.width / 2 - padding;
+    this._homeButton.y = this._homeButton.height / 2 + padding;
   }
 }

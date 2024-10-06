@@ -1,10 +1,11 @@
-import { Application, Assets, Container, Sprite, Text, Texture } from 'pixi.js';
+import { Application, Assets, Color, Container, Sprite } from 'pixi.js';
 import { task2Data } from '../data/task_2_data';
 import TextLineBlender from '../systems/textLineBlender';
 import waitForTickerTime from '../utils/waitForTickerTime';
 import gsap from 'gsap';
 import waitForCondition from '../utils/waitForCondition';
 import UIController from '../components/uiController';
+import createRadialGradientTexture from '../utils/createRadialGradientTexture';
 
 class SceneTask2 extends Container {
   private _paused: boolean = true;
@@ -15,15 +16,18 @@ class SceneTask2 extends Container {
 
   constructor() {
     super();
-
-    this.textLineBlender = new TextLineBlender(task2Data);
-    this._textLayer = new Container();
-    this.addChild(this._textLayer);
   }
 
   public async init(app: Application) {
     Assets.add({ alias: 'animals', src: 'assets/sprites/task_2_0.json' });
+
     await Assets.load('animals');
+
+    this._createBackground(app);
+
+    this.textLineBlender = new TextLineBlender(task2Data);
+    this._textLayer = new Container();
+    this.addChild(this._textLayer);
 
     //this.start(app);
     this._createUI(app);
@@ -61,6 +65,30 @@ class SceneTask2 extends Container {
     await waitForTickerTime(1000, app.ticker);
 
     this._animate(app);
+  }
+
+  private _createBackground(app: Application) {
+    const AR = app.screen.width / app.screen.height;
+    const radius = Math.hypot(app.screen.width / 2, app.screen.height / 2);
+    console.log(app.screen.width / 2, app.screen.height / 2, radius);
+    const gradientTexture = createRadialGradientTexture(radius, [
+      { color: new Color(0x222222), stop: 0 },
+      { color: new Color(0x090909), stop: 1 },
+    ]);
+    const background = Sprite.from(gradientTexture);
+    background.anchor.set(0.5);
+
+    if (AR > 1) {
+      background.width = radius * 2;
+      background.height = background.width / AR;
+    } else {
+      background.height = radius * 2;
+      background.width = background.height * AR;
+    }
+
+    background.x = app.screen.width / 2;
+    background.y = app.screen.height / 2;
+    this.addChild(background);
   }
 
   private _createUI(app: Application) {

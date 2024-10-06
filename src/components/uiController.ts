@@ -2,20 +2,20 @@ import { Container } from 'pixi.js';
 import ButtonFactory from '../systems/buttonFactory';
 import { Button } from './button';
 
-interface UITask1Options {
+interface UIControllerOptions {
   onStart: () => void;
   onStop: () => void;
   onPause: () => void;
   onResume: () => void;
 }
 
-class UITask1 extends Container {
+class UIController extends Container {
   private _startButton: Button;
   private _resetButton: Button;
   private _pauseButton: Button;
   private _resumeButton: Button;
 
-  constructor(options: UITask1Options) {
+  constructor(options: UIControllerOptions) {
     super();
 
     this._startButton = ButtonFactory.createDefaultButton('Start');
@@ -88,4 +88,4 @@ class UITask1 extends Container {
   }
 }
 
-export default UITask1;
+export default UIController;

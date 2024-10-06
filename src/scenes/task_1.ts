@@ -5,7 +5,7 @@ import CardFlipAnimation from '../systems/cardFlipAnimation';
 import waitForTickerTime from '../utils/waitForTickerTime';
 import ButtonFactory from '../systems/buttonFactory';
 import waitForCondition from '../utils/waitForCondition';
-import UITask1 from '../components/uiTask1';
+import UIController from '../components/uiController';
 
 class SceneTask1 extends Container {
   private NUM_CARDS = 144;
@@ -15,7 +15,7 @@ class SceneTask1 extends Container {
   private _cardFlipAnimation: CardFlipAnimation;
   private _backCardsLayer: Container;
   private _frontCardsLayer: Container;
-  private _UI: UITask1;
+  private _UI: UIController;
   private _paused: boolean = true;
   private _running: boolean = false;
 
@@ -69,7 +69,7 @@ class SceneTask1 extends Container {
   }
 
   private _createUI(app: Application) {
-    this._UI = new UITask1({
+    this._UI = new UIController({
       onStart: () => {
         this.start(app);
       },

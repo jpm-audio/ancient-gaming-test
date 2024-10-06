@@ -1,6 +1,14 @@
-import { Container, Application, Assets, Sprite, Texture } from 'pixi.js';
+import {
+  Container,
+  Application,
+  Assets,
+  Sprite,
+  Texture,
+  SpriteOptions,
+} from 'pixi.js';
 import UIController from '../components/uiController';
-import ParticleEmitter from '../systems/particleEmitter';
+import { ParticleEmitter } from '../systems/particleEmitter';
+import { task3Data } from '../data/task_3_data';
 
 class SceneTask3 extends Container {
   private _UI: UIController;
@@ -18,11 +26,14 @@ class SceneTask3 extends Container {
     await Assets.load('fireParticles');
 
     this._fire = new ParticleEmitter(
-      {},
+      task3Data,
       () =>
-        new Sprite(
-          Texture.from(`particle_fire_${Math.floor(Math.random() * 10)}.png`)
-        ),
+        new Sprite({
+          texture: Texture.from(
+            `particle_fire_${Math.floor(Math.random() * 10)}.png`
+          ),
+          anchor: 0.5,
+        }),
       app.ticker
     );
 

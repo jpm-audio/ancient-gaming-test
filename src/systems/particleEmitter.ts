@@ -1,5 +1,6 @@
 import {
   Color,
+  ColorSource,
   Container,
   Graphics,
   PointData,
@@ -8,14 +9,15 @@ import {
   View,
 } from 'pixi.js';
 
-type ParticleView = Container | Sprite | Graphics;
-type SpawnParticle = () => ParticleView;
+export type ParticleView = Container | Sprite | Graphics;
+export type SpawnParticle = () => ParticleView;
 
-interface ParticleEmitterSettings {
+export interface ParticleEmitterSettings {
   poolSize: number;
   maxParticles: number;
   lifetime: [number, number];
   spawnFrequency: [number, number];
+  startPosition: [PointData, PointData];
   speed: [PointData, PointData];
   acceleration: [PointData, PointData];
   startRotation: [number, number];
@@ -24,11 +26,13 @@ interface ParticleEmitterSettings {
   startScale: [PointData, PointData];
   scaleSpeed: [PointData, PointData];
   scaleAcceleration: [PointData, PointData];
+  startAlpha: [number, number];
+  endAlpha: [number, number];
   startColor: Color[];
   endColor: Color[];
 }
 
-interface ParticleSettings {
+export interface ParticleSettings {
   lifetime: number;
   speed: PointData;
   acceleration: PointData;
@@ -36,18 +40,43 @@ interface ParticleSettings {
   rotationAcceleration: number;
   scaleSpeed: PointData;
   scaleAcceleration: PointData;
+  startAlpha: number;
+  endAlpha: number;
   startColor: Color;
   endColor: Color;
 }
 
-class Particle {
+export class Particle {
   view: ParticleView;
   active: boolean;
   currentLifetime: number;
   settings: ParticleSettings;
+
+  constructor(view: ParticleView) {
+    this.view = view;
+    this.reset();
+  }
+
+  reset() {
+    this.active = false;
+    this.currentLifetime = 0;
+    this.settings = {
+      lifetime: 0,
+      speed: { x: 0, y: 0 },
+      acceleration: { x: 0, y: 0 },
+      rotationSpeed: 0,
+      rotationAcceleration: 0,
+      scaleSpeed: { x: 0, y: 0 },
+      scaleAcceleration: { x: 0, y: 0 },
+      startAlpha: 1,
+      endAlpha: 1,
+      startColor: new Color(0xffffff),
+      endColor: new Color(0xffffff),
+    };
+  }
 }
 
-class ParticleEmitter extends Container {
+export class ParticleEmitter extends Container {
   static SPAWN_REFERENCE = 1000 / 60;
 
   private _isRunning: boolean = false;
@@ -55,15 +84,21 @@ class ParticleEmitter extends Container {
   private _spawnElapsed: number = 0;
   private _pool: Particle[];
   private _settings: ParticleEmitterSettings = {
-    poolSize: 50,
-    maxParticles: 100,
-    lifetime: [1000, 1000],
+    poolSize: 10, // Max number of particles creates in total, in stage or not
+    maxParticles: 10, // Max number of particles on stage
+    lifetime: [1000, 1000], // Time of life of a particle in ms
     spawnFrequency: [0.01, 0.01], // [1-0] Whete 1 is a spawn from SPAWN_REFERENCE
+    startPosition: [
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+    ],
     speed: [
+      // Speed of the particle px/sec
       { x: 0, y: 0 },
       { x: 0, y: 0 },
     ],
     acceleration: [
+      // Acceleration of the particle px/sec^2
       { x: 0, y: 0 },
       { x: 0, y: 0 },
     ],
@@ -82,6 +117,8 @@ class ParticleEmitter extends Container {
       { x: 0, y: 0 },
       { x: 0, y: 0 },
     ],
+    startAlpha: [1, 1],
+    endAlpha: [1, 1],
     startColor: [new Color(0xffffff)],
     endColor: [new Color(0xffffff)],
   };
@@ -121,161 +158,208 @@ class ParticleEmitter extends Container {
       this.children.length >= this._settings.maxParticles;
     const hasPoolLimit = this._pool.length >= this._settings.poolSize;
 
-    // Particles limit
+    // Reached particles limit on stage?
     if (hasParticleLimit) return;
 
-    // No available particles and pool limit
-    const availableParticles = this._pool.filter((p) => !p.active) || [];
-    if (!availableParticles.length && hasPoolLimit) return;
+    // Reached pool limit?
+    if (!hasPoolLimit) {
+      particle = new Particle(this.spawnParticle());
+      this._initParticle(particle);
 
+      particle.active = true;
+
+      this._pool.push(particle);
+      this.addChild(particle.view);
+      return;
+    }
+
+    // Available Particles?
+    const availableParticles = this._pool.filter((p) => !p.active) || [];
     if (availableParticles.length) {
       particle =
         availableParticles[
           Math.floor(Math.random() * availableParticles.length)
         ];
-    } else {
-      particle = this._createParticle();
-      this._pool.push(particle);
+      particle.reset();
+      this._initParticle(particle);
+      particle.active = true;
+      this.addChild(particle.view);
+      return;
     }
-
-    console.log('SPAWN');
-
-    particle.active = true;
-    this.addChild(particle.view);
   }
 
-  private _createParticle() {
+  private _initParticle(particle: Particle) {
     const lifetime = Math.abs(
       Math.random() *
         (this._settings.lifetime[1] - this._settings.lifetime[0]) +
         this._settings.lifetime[0]
     );
+
+    const position = {
+      x:
+        Math.random() *
+          (this._settings.startPosition[1].x -
+            this._settings.startPosition[0].x) +
+        this._settings.startPosition[0].x,
+      y:
+        Math.random() *
+          (this._settings.startPosition[1].y -
+            this._settings.startPosition[0].y) +
+        this._settings.startPosition[0].y,
+    };
     const speed = {
-      x: Math.abs(
+      x:
         Math.random() *
           (this._settings.speed[1].x - this._settings.speed[0].x) +
-          this._settings.speed[0].x
-      ),
-      y: Math.abs(
+        this._settings.speed[0].x,
+      y:
         Math.random() *
           (this._settings.speed[1].y - this._settings.speed[0].y) +
-          this._settings.speed[0].y
-      ),
+        this._settings.speed[0].y,
     };
     const acceleration = {
-      x: Math.abs(
+      x:
         Math.random() *
           (this._settings.acceleration[1].x -
             this._settings.acceleration[0].x) +
-          this._settings.acceleration[0].x
-      ),
-      y: Math.abs(
+        this._settings.acceleration[0].x,
+      y:
         Math.random() *
           (this._settings.acceleration[1].y -
             this._settings.acceleration[0].y) +
-          this._settings.acceleration[0].y
-      ),
+        this._settings.acceleration[0].y,
     };
-    const rotationSpeed = Math.abs(
+
+    const rotation =
+      Math.random() *
+        (this._settings.startRotation[1] - this._settings.startRotation[0]) +
+      this._settings.startRotation[0];
+    const rotationSpeed =
       Math.random() *
         (this._settings.rotationSpeed[1] - this._settings.rotationSpeed[0]) +
-        this._settings.rotationSpeed[0]
-    );
-    const rotationAcceleration = Math.abs(
+      this._settings.rotationSpeed[0];
+    const rotationAcceleration =
       Math.random() *
         (this._settings.rotationAcceleration[1] -
           this._settings.rotationAcceleration[0]) +
-        this._settings.rotationAcceleration[0]
-    );
+      this._settings.rotationAcceleration[0];
+
+    const scale = {
+      x:
+        Math.random() *
+          (this._settings.startScale[1].x - this._settings.startScale[0].x) +
+        this._settings.startScale[0].x,
+      y:
+        Math.random() *
+          (this._settings.startScale[1].y - this._settings.startScale[0].y) +
+        this._settings.startScale[0].y,
+    };
     const scaleSpeed = {
-      x: Math.abs(
+      x:
         Math.random() *
           (this._settings.scaleSpeed[1].x - this._settings.scaleSpeed[0].x) +
-          this._settings.scaleSpeed[0].x
-      ),
-      y: Math.abs(
+        this._settings.scaleSpeed[0].x,
+      y:
         Math.random() *
           (this._settings.scaleSpeed[1].y - this._settings.scaleSpeed[0].y) +
-          this._settings.scaleSpeed[0].y
-      ),
+        this._settings.scaleSpeed[0].y,
     };
     const scaleAcceleration = {
-      x: Math.abs(
+      x:
         Math.random() *
           (this._settings.scaleAcceleration[1].x -
             this._settings.scaleAcceleration[0].x) +
-          this._settings.scaleAcceleration[0].x
-      ),
-      y: Math.abs(
+        this._settings.scaleAcceleration[0].x,
+      y:
         Math.random() *
           (this._settings.scaleAcceleration[1].y -
             this._settings.scaleAcceleration[0].y) +
-          this._settings.scaleAcceleration[0].y
-      ),
+        this._settings.scaleAcceleration[0].y,
     };
+    const startAlpha =
+      Math.random() *
+        (this._settings.startAlpha[1] - this._settings.startAlpha[0]) +
+      this._settings.startAlpha[0];
+    const endAlpha =
+      Math.random() *
+        (this._settings.endAlpha[1] - this._settings.endAlpha[0]) +
+      this._settings.endAlpha[0];
 
-    return {
-      view: this.spawnParticle(),
-      active: false,
-      currentLifetime: this._settings.lifetime[0],
-      settings: {
-        lifetime,
-        speed,
-        acceleration,
-        rotationSpeed,
-        rotationAcceleration,
-        scaleSpeed,
-        scaleAcceleration,
-        startColor:
-          this._settings.startColor[
-            Math.floor(Math.random() * this._settings.startColor.length)
-          ],
-        endColor:
-          this._settings.endColor[
-            Math.floor(Math.random() * this._settings.startColor.length)
-          ],
-      },
-    };
+    const startColor =
+      this._settings.startColor[
+        Math.floor(Math.random() * this._settings.startColor.length)
+      ];
+    const endColor =
+      this._settings.endColor[
+        Math.floor(Math.random() * this._settings.startColor.length)
+      ];
+
+    particle.view.x = position.x;
+    particle.view.y = position.y;
+    particle.view.rotation = rotation;
+    particle.view.scale.x = scale.x;
+    particle.view.scale.y = scale.y;
+    particle.view.alpha = startAlpha;
+    particle.view.tint = startColor;
+    particle.settings.lifetime = lifetime;
+    particle.settings.speed = speed;
+    particle.settings.acceleration = acceleration;
+    particle.settings.rotationSpeed = rotationSpeed;
+    particle.settings.rotationAcceleration = rotationAcceleration;
+    particle.settings.scaleSpeed = scaleSpeed;
+    particle.settings.scaleAcceleration = scaleAcceleration;
+    particle.settings.startAlpha = startAlpha;
+    particle.settings.endAlpha = endAlpha;
+    particle.settings.startColor = startColor;
+    particle.settings.endColor = endColor;
   }
 
   private _updateParticle(particle: Particle, elapsedTime: number) {
     const lifePercentage =
       particle.currentLifetime / particle.settings.lifetime;
+    const elapsedSecs = elapsedTime / 1000;
 
     // Update Speed
-    particle.settings.speed.x += particle.settings.acceleration.x * elapsedTime;
-    particle.settings.speed.y += particle.settings.acceleration.y * elapsedTime;
+    particle.settings.speed.x += particle.settings.acceleration.x * elapsedSecs;
+    particle.settings.speed.y += particle.settings.acceleration.y * elapsedSecs;
 
     // Update Position
-    particle.view.x += particle.settings.speed.x * elapsedTime;
-    particle.view.y += particle.settings.speed.y * elapsedTime;
+    particle.view.x += particle.settings.speed.x * elapsedSecs;
+    particle.view.y += particle.settings.speed.y * elapsedSecs;
 
     // Update Rotation Speed
     particle.settings.rotationSpeed +=
-      particle.settings.rotationAcceleration * elapsedTime;
+      particle.settings.rotationAcceleration * elapsedSecs;
 
     // Update Rotation
-    particle.view.rotation += particle.settings.rotationSpeed * elapsedTime;
+    particle.view.rotation += particle.settings.rotationSpeed * elapsedSecs;
 
     // Update Scale Speed
     particle.settings.scaleSpeed.x +=
-      particle.settings.scaleAcceleration.x * elapsedTime;
+      particle.settings.scaleAcceleration.x * elapsedSecs;
     particle.settings.scaleSpeed.y +=
-      particle.settings.scaleAcceleration.y * elapsedTime;
+      particle.settings.scaleAcceleration.y * elapsedSecs;
 
     // Update Scale
-    particle.view.scale.x += particle.settings.scaleSpeed.x * elapsedTime;
-    particle.view.scale.y += particle.settings.scaleSpeed.y * elapsedTime;
+    particle.view.scale.x += particle.settings.scaleSpeed.x * elapsedSecs;
+    particle.view.scale.y += particle.settings.scaleSpeed.y * elapsedSecs;
+
+    // Alpha
+    particle.view.alpha =
+      particle.settings.startAlpha +
+      (particle.settings.endAlpha - particle.settings.startAlpha) *
+        lifePercentage;
 
     // Update Color
     const startRGB = particle.settings.startColor.toRgb();
     const endRGB = particle.settings.endColor.toRgb();
-    const colorRGB = {
-      r: startRGB.r + (endRGB.r - startRGB.r) * lifePercentage,
-      g: startRGB.g + (endRGB.g - startRGB.g) * lifePercentage,
-      b: startRGB.b + (endRGB.b - startRGB.b) * lifePercentage,
-    };
-    particle.view.tint = new Color(colorRGB).toHex();
+    const colorRGB: ColorSource = [
+      startRGB.r + (endRGB.r - startRGB.r) * lifePercentage,
+      startRGB.g + (endRGB.g - startRGB.g) * lifePercentage,
+      startRGB.b + (endRGB.b - startRGB.b) * lifePercentage,
+    ];
+
+    particle.view.tint = new Color(colorRGB).toNumber();
   }
 
   private _killParticle(particle: Particle) {
@@ -286,26 +370,24 @@ class ParticleEmitter extends Container {
   update(ticker: Ticker) {
     if (!this._isRunning) return;
 
-    console.log(this._spawnElapsed, this._spawnWait);
-
     if (this._spawnElapsed >= this._spawnWait) {
+      console.log(this.children.length);
       this._spawn();
       this._resetSpawnTimer();
     } else {
       this._spawnElapsed += ticker.deltaMS;
     }
-    /*
+
     this._pool.forEach((particle) => {
       if (particle.active) {
         particle.currentLifetime += ticker.deltaMS;
-
         if (particle.currentLifetime >= particle.settings.lifetime) {
           this._killParticle(particle);
         } else {
           this._updateParticle(particle, ticker.deltaMS);
         }
       }
-    });*/
+    });
   }
 
   start() {
@@ -318,5 +400,3 @@ class ParticleEmitter extends Container {
     this._isRunning = false;
   }
 }
-
-export default ParticleEmitter;

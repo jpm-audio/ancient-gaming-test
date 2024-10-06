@@ -1,6 +1,7 @@
 import { Container } from 'pixi.js';
 import ButtonFactory from '../systems/buttonFactory';
 import { Button } from './button';
+import TaskScene from '../scenes/taskScene';
 
 interface UIControllerOptions {
   onStart: () => void;
@@ -17,6 +18,8 @@ class UIController extends Container {
 
   constructor(options: UIControllerOptions) {
     super();
+
+    this.alpha = 0;
 
     this._startButton = ButtonFactory.createDefaultButton('Start');
     this._startButton.x = -100;
@@ -85,6 +88,20 @@ class UIController extends Container {
     this._resumeButton.visible = false;
     this._pauseButton.visible = true;
     this._pauseButton.disabled = true;
+  }
+
+  public async show() {
+    await gsap.to(this, {
+      duration: TaskScene.DEFAULT_TRANSITION_TIME,
+      alpha: 1,
+    });
+  }
+
+  public async hide() {
+    await gsap.to(this, {
+      duration: TaskScene.DEFAULT_TRANSITION_TIME,
+      alpha: 0,
+    });
   }
 }
 

@@ -1,4 +1,4 @@
-import { Container, Graphics, PointData, Text, Ticker } from 'pixi.js';
+import { Container, Graphics, Text, Ticker } from 'pixi.js';
 
 class FpsDisplay extends Container {
   private _fpsText: Text;

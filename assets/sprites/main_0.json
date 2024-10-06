@@ -1,0 +1,39 @@
+{"frames": {
+
+"select_task_1.jpg":
+{
+	"frame": {"x":1,"y":1,"w":250,"h":300},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":250,"h":300},
+	"sourceSize": {"w":250,"h":300}
+},
+"select_task_2.jpg":
+{
+	"frame": {"x":1,"y":303,"w":250,"h":300},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":250,"h":300},
+	"sourceSize": {"w":250,"h":300}
+},
+"select_task_3.jpg":
+{
+	"frame": {"x":1,"y":605,"w":250,"h":300},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":250,"h":300},
+	"sourceSize": {"w":250,"h":300}
+}},
+"animations": {
+	"select_task": ["select_task_1.jpg","select_task_2.jpg","select_task_3.jpg"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.1",
+	"image": "main_0.png",
+	"format": "RGBA8888",
+	"size": {"w":252,"h":906},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:4bcdc82d22df379b12bfe9af42895bd1:d0bb48c3759d889b96fdf5710bd9d7a5:b90b1cd981e8ae38154439bf760404eb$"
+}
+}

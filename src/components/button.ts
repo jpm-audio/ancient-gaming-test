@@ -1,4 +1,4 @@
-import { Container, Text, Graphics, TextStyle } from 'pixi.js';
+import { Container } from 'pixi.js';
 
 interface ButtonOptions {
   base: Container;
@@ -23,9 +23,11 @@ export class Button extends Container {
     if (value === this.interactive) {
       this.interactive = !value;
       this.removeChildren();
-      value
-        ? this.addChild(this._content.disabled)
-        : this.addChild(this._content.base);
+      if (value) {
+        this.addChild(this._content.disabled);
+      } else {
+        this.addChild(this._content.base);
+      }
     }
   }
 

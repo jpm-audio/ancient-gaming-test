@@ -1,12 +1,4 @@
-import {
-  Color,
-  Container,
-  FillInput,
-  Graphics,
-  GraphicsContext,
-  Text,
-  TextOptions,
-} from 'pixi.js';
+import { Container, FillInput, Graphics, Text, TextOptions } from 'pixi.js';
 import { Button } from '../components/button';
 
 class ButtonFactory {

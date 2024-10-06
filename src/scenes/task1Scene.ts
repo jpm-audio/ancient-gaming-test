@@ -1,13 +1,13 @@
-import { Application, Assets, Color, Container, Point, Sprite } from 'pixi.js';
+import { Assets, Container, Point } from 'pixi.js';
 import Deck from '../components/deck';
 import Card from '../components/card';
 import CardFlipAnimation from '../systems/cardFlipAnimation';
 import waitForTickerTime from '../utils/waitForTickerTime';
 import waitForCondition from '../utils/waitForCondition';
-import UIController from '../components/uiController';
-import createRadialGradientTexture from '../utils/createRadialGradientTexture';
+import TaskScene, { TaskSceneInfo } from './taskScene';
+import Main from './main';
 
-class SceneTask1 extends Container {
+export default class Task1Scene extends TaskScene {
   private NUM_CARDS = 144;
   private DECKS_GAP = 100;
   private _decks: Deck[] = [];
@@ -15,23 +15,24 @@ class SceneTask1 extends Container {
   private _cardFlipAnimation: CardFlipAnimation;
   private _backCardsLayer: Container;
   private _frontCardsLayer: Container;
-  private _UI: UIController;
   private _paused: boolean = true;
   private _running: boolean = false;
 
-  constructor() {
-    super();
-
+  constructor(main: Main, info: TaskSceneInfo) {
+    super(main, info);
     this._cardFlipAnimation = new CardFlipAnimation();
     this._backCardsLayer = new Container();
     this._frontCardsLayer = new Container();
   }
 
-  public async init(app: Application) {
-    this._createBackground(app);
-    await this._createDecks(app);
-    this._createUI(app);
+  public async init() {
+    await super.init();
+    this._createBackgroundGradient(0x00512c, 0x001e10);
+    await this._createDecks();
+    this._createTitle();
     this._resetCards();
+
+    this.positionElements();
   }
 
   private async _createCards() {
@@ -50,31 +51,7 @@ class SceneTask1 extends Container {
     }
   }
 
-  private _createBackground(app: Application) {
-    const AR = app.screen.width / app.screen.height;
-    const radius = Math.hypot(app.screen.width / 2, app.screen.height / 2);
-    console.log(app.screen.width / 2, app.screen.height / 2, radius);
-    const gradientTexture = createRadialGradientTexture(radius, [
-      { color: new Color(0x00512c), stop: 0 },
-      { color: new Color(0x001e10), stop: 1 },
-    ]);
-    const background = Sprite.from(gradientTexture);
-    background.anchor.set(0.5);
-
-    if (AR > 1) {
-      background.width = radius * 2;
-      background.height = background.width / AR;
-    } else {
-      background.height = radius * 2;
-      background.width = background.height * AR;
-    }
-
-    background.x = app.screen.width / 2;
-    background.y = app.screen.height / 2;
-    this.addChild(background);
-  }
-
-  private async _createDecks(app: Application) {
+  private async _createDecks() {
     // Create the _decks of cards
     this._decks.push(new Deck({ x: -1, y: -2 }, 'bottom'));
     this._decks.push(new Deck({ x: 1, y: -2 }, 'bottom'));
@@ -82,10 +59,17 @@ class SceneTask1 extends Container {
     await this._createCards();
 
     this._decks[0].x =
-      (app.screen.width - this._cards[0].width - this.DECKS_GAP) / 2;
+      (this._main.currentApp.screen.width -
+        this._cards[0].width -
+        this.DECKS_GAP) /
+      2;
     this._decks[1].x =
-      (app.screen.width + this._cards[0].width + this.DECKS_GAP) / 2;
-    this._decks[0].y = this._decks[1].y = app.screen.height / 2;
+      (this._main.currentApp.screen.width +
+        this._cards[0].width +
+        this.DECKS_GAP) /
+      2;
+    this._decks[0].y = this._decks[1].y =
+      this._main.currentApp.screen.height / 2;
 
     this.addChild(this._decks[0]);
     this.addChild(this._decks[1]);
@@ -93,30 +77,7 @@ class SceneTask1 extends Container {
     this.addChild(this._frontCardsLayer);
   }
 
-  private _createUI(app: Application) {
-    this._UI = new UIController({
-      onStart: () => {
-        this.start(app);
-      },
-      onStop: () => {
-        this.reset();
-      },
-      onPause: () => {
-        this._paused = true;
-        this._cardFlipAnimation.pause();
-      },
-      onResume: () => {
-        this._paused = false;
-        this._cardFlipAnimation.resume();
-      },
-    });
-    this._UI.x = app.screen.width / 2;
-    this._UI.y = app.screen.height - 100;
-
-    this.addChild(this._UI);
-  }
-
-  private async _animateACard(app: Application) {
+  private async _animateACard() {
     await waitForCondition(() => this._running && this._paused);
 
     if (!this._running) return;
@@ -160,12 +121,11 @@ class SceneTask1 extends Container {
 
     this._backCardsLayer.addChildAt(card, 0);
 
-    await waitForTickerTime(1000, app.ticker);
-    this._animateACard(app);
+    await waitForTickerTime(1000, this._main.currentApp.ticker);
+    this._animateACard();
   }
 
   private _resetCards() {
-    this._UI.reset();
     this._decks.forEach((deck) => {
       deck.reset();
     });
@@ -179,18 +139,16 @@ class SceneTask1 extends Container {
     });
   }
 
-  public start(app: Application) {
+  public start() {
     this._paused = false;
     this._running = true;
-    this._animateACard(app);
+    this._animateACard();
   }
 
-  public async reset() {
+  public reset() {
     this._paused = true;
     this._running = false;
     this._cardFlipAnimation.stop();
     this._resetCards();
   }
 }
-
-export default SceneTask1;

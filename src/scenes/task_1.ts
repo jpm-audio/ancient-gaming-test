@@ -1,11 +1,11 @@
-import { Application, Assets, Container, Point, Sprite } from 'pixi.js';
+import { Application, Assets, Color, Container, Point, Sprite } from 'pixi.js';
 import Deck from '../components/deck';
 import Card from '../components/card';
 import CardFlipAnimation from '../systems/cardFlipAnimation';
 import waitForTickerTime from '../utils/waitForTickerTime';
-import ButtonFactory from '../systems/buttonFactory';
 import waitForCondition from '../utils/waitForCondition';
 import UIController from '../components/uiController';
+import createRadialGradientTexture from '../utils/createRadialGradientTexture';
 
 class SceneTask1 extends Container {
   private NUM_CARDS = 144;
@@ -28,12 +28,13 @@ class SceneTask1 extends Container {
   }
 
   public async init(app: Application) {
+    this._createBackground(app);
     await this._createDecks(app);
     this._createUI(app);
     this._resetCards();
   }
 
-  private async _createCards(app: Application) {
+  private async _createCards() {
     const sheet = await Assets.load('assets/sprites/task_1_0.json');
     // Add the cards to the deck
     const cardFrameTexture = sheet.textures['card.png'];
@@ -49,12 +50,36 @@ class SceneTask1 extends Container {
     }
   }
 
+  private _createBackground(app: Application) {
+    const AR = app.screen.width / app.screen.height;
+    const radius = Math.hypot(app.screen.width / 2, app.screen.height / 2);
+    console.log(app.screen.width / 2, app.screen.height / 2, radius);
+    const gradientTexture = createRadialGradientTexture(radius, [
+      { color: new Color(0x00512c), stop: 0 },
+      { color: new Color(0x001e10), stop: 1 },
+    ]);
+    const background = Sprite.from(gradientTexture);
+    background.anchor.set(0.5);
+
+    if (AR > 1) {
+      background.width = radius * 2;
+      background.height = background.width / AR;
+    } else {
+      background.height = radius * 2;
+      background.width = background.height * AR;
+    }
+
+    background.x = app.screen.width / 2;
+    background.y = app.screen.height / 2;
+    this.addChild(background);
+  }
+
   private async _createDecks(app: Application) {
     // Create the _decks of cards
     this._decks.push(new Deck({ x: -1, y: -2 }, 'bottom'));
     this._decks.push(new Deck({ x: 1, y: -2 }, 'bottom'));
 
-    await this._createCards(app);
+    await this._createCards();
 
     this._decks[0].x =
       (app.screen.width - this._cards[0].width - this.DECKS_GAP) / 2;

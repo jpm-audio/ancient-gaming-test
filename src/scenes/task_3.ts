@@ -4,7 +4,7 @@ import {
   Assets,
   Sprite,
   Texture,
-  SpriteOptions,
+  TilingSprite,
 } from 'pixi.js';
 import UIController from '../components/uiController';
 import { ParticleEmitter } from '../systems/particleEmitter';
@@ -23,7 +23,11 @@ class SceneTask3 extends Container {
     await this._createUI(app);
 
     Assets.add({ alias: 'fireParticles', src: 'assets/sprites/task_3_0.json' });
+    Assets.add({ alias: 'forestTile', src: 'assets/images/forest_tile.png' });
     await Assets.load('fireParticles');
+    await Assets.load('forestTile');
+
+    this._createBackground(app);
 
     this._fire = new ParticleEmitter(
       task3Data,
@@ -40,21 +44,43 @@ class SceneTask3 extends Container {
     this._fire.x = app.screen.width / 2;
     this._fire.y = app.screen.height / 2;
     this.addChild(this._fire);
+
+    const pointerSurface = new Container();
+    pointerSurface.width = app.screen.width;
+    pointerSurface.height = app.screen.height;
+    pointerSurface.interactive = true;
+    pointerSurface.on('pointerdown', () => {
+      console.log('CLICK');
+    });
+    this.addChild(pointerSurface);
+  }
+
+  private _createBackground(app: Application) {
+    const forestTexture = Texture.from('forestTile');
+    const forest = new TilingSprite({
+      texture: forestTexture,
+      width: app.screen.width,
+      height: forestTexture.height,
+    });
+    forest.anchor.set(0.5);
+    forest.x = app.screen.width / 2;
+    forest.y = app.screen.height / 2;
+    this.addChild(forest);
   }
 
   private async _createUI(app: Application) {
     this._UI = new UIController({
       onStart: () => {
-        this.start(app);
+        this.start();
       },
       onStop: () => {
         this.reset();
       },
       onPause: () => {
-        this._paused = true;
+        this._fire.pause();
       },
       onResume: () => {
-        this._paused = false;
+        this._fire.resume();
       },
     });
     this._UI.x = app.screen.width / 2;
@@ -63,14 +89,14 @@ class SceneTask3 extends Container {
     this.addChild(this._UI);
   }
 
-  public async _animate(app: Application) {
+  public async _animate() {
     this._fire.start();
   }
 
-  public start(app: Application) {
+  public start() {
     this._paused = false;
     this._running = true;
-    this._animate(app);
+    this._animate();
   }
 
   public async reset() {

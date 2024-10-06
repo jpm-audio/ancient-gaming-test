@@ -6,7 +6,6 @@ import {
   PointData,
   Sprite,
   Ticker,
-  View,
 } from 'pixi.js';
 
 export type ParticleView = Container | Sprite | Graphics;
@@ -80,6 +79,7 @@ export class ParticleEmitter extends Container {
   static SPAWN_REFERENCE = 1000 / 60;
 
   private _isRunning: boolean = false;
+  private _isPaused: boolean = false;
   private _spawnWait: number = 0;
   private _spawnElapsed: number = 0;
   private _pool: Particle[];
@@ -124,6 +124,14 @@ export class ParticleEmitter extends Container {
   };
 
   public spawnParticle: SpawnParticle;
+
+  public get isRunning() {
+    return this._isRunning;
+  }
+
+  public get isPaused() {
+    return this._isPaused;
+  }
 
   constructor(
     settings: Partial<ParticleEmitterSettings>,
@@ -368,10 +376,9 @@ export class ParticleEmitter extends Container {
   }
 
   update(ticker: Ticker) {
-    if (!this._isRunning) return;
+    if (!this._isRunning || this._isPaused) return;
 
     if (this._spawnElapsed >= this._spawnWait) {
-      console.log(this.children.length);
       this._spawn();
       this._resetSpawnTimer();
     } else {
@@ -396,7 +403,29 @@ export class ParticleEmitter extends Container {
     this._resetSpawnTimer();
   }
 
-  stop() {
+  pause() {
+    if (!this._isRunning) return;
+    this._isPaused = true;
+  }
+
+  resume() {
+    if (!this._isRunning) return;
+    this._isPaused = false;
+  }
+
+  stop(hardReset: boolean = false) {
+    if (!this._isRunning) return;
+    this.reset(hardReset);
+  }
+
+  reset(hardReset: boolean = false) {
     this._isRunning = false;
+    this._isPaused = false;
+    this.removeChildren();
+    this._pool.forEach((particle) => {
+      particle.active = false;
+      if (hardReset) particle.view.destroy();
+    });
+    if (hardReset) this._pool = [];
   }
 }

@@ -1,0 +1,95 @@
+{"frames": {
+
+"particle_fire_0.png":
+{
+	"frame": {"x":879,"y":1,"w":157,"h":197},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":21,"y":3,"w":157,"h":197},
+	"sourceSize": {"w":200,"h":200}
+},
+"particle_fire_1.png":
+{
+	"frame": {"x":1194,"y":1,"w":146,"h":198},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":20,"y":2,"w":146,"h":198},
+	"sourceSize": {"w":200,"h":200}
+},
+"particle_fire_2.png":
+{
+	"frame": {"x":194,"y":1,"w":180,"h":183},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":20,"y":10,"w":180,"h":183},
+	"sourceSize": {"w":200,"h":200}
+},
+"particle_fire_3.png":
+{
+	"frame": {"x":707,"y":1,"w":170,"h":187},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":11,"y":12,"w":170,"h":187},
+	"sourceSize": {"w":200,"h":200}
+},
+"particle_fire_4.png":
+{
+	"frame": {"x":1,"y":1,"w":191,"h":194},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":191,"h":194},
+	"sourceSize": {"w":200,"h":200}
+},
+"particle_fire_5.png":
+{
+	"frame": {"x":376,"y":1,"w":167,"h":195},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":13,"y":5,"w":167,"h":195},
+	"sourceSize": {"w":200,"h":200}
+},
+"particle_fire_6.png":
+{
+	"frame": {"x":545,"y":1,"w":160,"h":200},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":27,"y":0,"w":160,"h":200},
+	"sourceSize": {"w":200,"h":200}
+},
+"particle_fire_7.png":
+{
+	"frame": {"x":1342,"y":1,"w":150,"h":190},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":37,"y":7,"w":150,"h":190},
+	"sourceSize": {"w":200,"h":200}
+},
+"particle_fire_8.png":
+{
+	"frame": {"x":1494,"y":1,"w":142,"h":191},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":22,"y":9,"w":142,"h":191},
+	"sourceSize": {"w":200,"h":200}
+},
+"particle_fire_9.png":
+{
+	"frame": {"x":1038,"y":1,"w":154,"h":199},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":1,"w":154,"h":199},
+	"sourceSize": {"w":200,"h":200}
+}},
+"animations": {
+	"particle_fire": ["particle_fire_0.png","particle_fire_1.png","particle_fire_2.png","particle_fire_3.png","particle_fire_4.png","particle_fire_5.png","particle_fire_6.png","particle_fire_7.png","particle_fire_8.png","particle_fire_9.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.1",
+	"image": "task_3_0.png",
+	"format": "RGBA8888",
+	"size": {"w":1637,"h":202},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:c51cff1b7a789c0eacb0a2fe43da01d4:b4930e88b62486deda18553fc41a672a:05538a6aba9e265d977e821ec4f6aabe$"
+}
+}

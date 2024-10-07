@@ -1,0 +1,252 @@
+{"frames": {
+
+"bear.png":
+{
+	"frame": {"x":322,"y":528,"w":154,"h":132},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":154,"h":132},
+	"sourceSize": {"w":154,"h":132}
+},
+"buffalo.png":
+{
+	"frame": {"x":186,"y":174,"w":183,"h":152},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":183,"h":152},
+	"sourceSize": {"w":183,"h":152}
+},
+"chick.png":
+{
+	"frame": {"x":143,"y":1121,"w":129,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":129,"h":128},
+	"sourceSize": {"w":129,"h":128}
+},
+"chicken.png":
+{
+	"frame": {"x":303,"y":792,"w":128,"h":145},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":145},
+	"sourceSize": {"w":128,"h":145}
+},
+"cow.png":
+{
+	"frame": {"x":1,"y":747,"w":145,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":145,"h":128},
+	"sourceSize": {"w":145,"h":128}
+},
+"crocodile.png":
+{
+	"frame": {"x":1,"y":1138,"w":129,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":129,"h":128},
+	"sourceSize": {"w":129,"h":128}
+},
+"dog.png":
+{
+	"frame": {"x":157,"y":598,"w":129,"h":157},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":129,"h":157},
+	"sourceSize": {"w":129,"h":157}
+},
+"duck.png":
+{
+	"frame": {"x":274,"y":1182,"w":129,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":129,"h":128},
+	"sourceSize": {"w":129,"h":128}
+},
+"elephant.png":
+{
+	"frame": {"x":1,"y":165,"w":183,"h":154},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":183,"h":154},
+	"sourceSize": {"w":183,"h":154}
+},
+"frog.png":
+{
+	"frame": {"x":157,"y":729,"w":130,"h":144},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":130,"h":144},
+	"sourceSize": {"w":130,"h":144}
+},
+"giraffe.png":
+{
+	"frame": {"x":1,"y":321,"w":154,"h":162},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":154,"h":162},
+	"sourceSize": {"w":154,"h":162}
+},
+"goat.png":
+{
+	"frame": {"x":272,"y":1,"w":184,"h":171},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":184,"h":171},
+	"sourceSize": {"w":184,"h":171}
+},
+"gorilla.png":
+{
+	"frame": {"x":132,"y":1251,"w":129,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":129,"h":128},
+	"sourceSize": {"w":129,"h":128}
+},
+"hippo.png":
+{
+	"frame": {"x":1,"y":617,"w":154,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":154,"h":128},
+	"sourceSize": {"w":154,"h":128}
+},
+"horse.png":
+{
+	"frame": {"x":1,"y":877,"w":129,"h":141},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":129,"h":141},
+	"sourceSize": {"w":129,"h":141}
+},
+"monkey.png":
+{
+	"frame": {"x":165,"y":328,"w":174,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":174,"h":128},
+	"sourceSize": {"w":174,"h":128}
+},
+"moose.png":
+{
+	"frame": {"x":1,"y":1,"w":269,"h":162},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":269,"h":162},
+	"sourceSize": {"w":269,"h":162}
+},
+"narwhal.png":
+{
+	"frame": {"x":165,"y":458,"w":138,"h":155},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":138,"h":155},
+	"sourceSize": {"w":138,"h":155}
+},
+"owl.png":
+{
+	"frame": {"x":132,"y":1381,"w":128,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+	"sourceSize": {"w":128,"h":128}
+},
+"panda.png":
+{
+	"frame": {"x":341,"y":352,"w":174,"h":128},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":174,"h":128},
+	"sourceSize": {"w":174,"h":128}
+},
+"parrot.png":
+{
+	"frame": {"x":1,"y":1268,"w":129,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":129,"h":128},
+	"sourceSize": {"w":129,"h":128}
+},
+"penguin.png":
+{
+	"frame": {"x":1,"y":1008,"w":140,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":140,"h":128},
+	"sourceSize": {"w":140,"h":128}
+},
+"pig.png":
+{
+	"frame": {"x":148,"y":861,"w":144,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":144,"h":128},
+	"sourceSize": {"w":144,"h":128}
+},
+"rabbit.png":
+{
+	"frame": {"x":371,"y":174,"w":129,"h":176},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":129,"h":176},
+	"sourceSize": {"w":129,"h":176}
+},
+"rhino.png":
+{
+	"frame": {"x":316,"y":662,"w":154,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":154,"h":128},
+	"sourceSize": {"w":154,"h":128}
+},
+"sloth.png":
+{
+	"frame": {"x":263,"y":1312,"w":129,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":129,"h":128},
+	"sourceSize": {"w":129,"h":128}
+},
+"snake.png":
+{
+	"frame": {"x":294,"y":922,"w":128,"h":142},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":142},
+	"sourceSize": {"w":128,"h":142}
+},
+"walrus.png":
+{
+	"frame": {"x":287,"y":1052,"w":128,"h":138},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":138},
+	"sourceSize": {"w":128,"h":138}
+},
+"whale.png":
+{
+	"frame": {"x":1,"y":477,"w":138,"h":154},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":138,"h":154},
+	"sourceSize": {"w":138,"h":154}
+},
+"zebra.png":
+{
+	"frame": {"x":144,"y":991,"w":128,"h":141},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":141},
+	"sourceSize": {"w":128,"h":141}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.1",
+	"image": "task_2_0.png",
+	"format": "RGBA8888",
+	"size": {"w":501,"h":1510},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:109f0fafeb6f26d90c1a8d5385bb99db:95c99fa074f6e41ebd41900e2c0e5ac7:6a1a1ba0017a0806510ff7e4c8a77b9c$"
+}
+}
